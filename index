@@ -1,27 +1,28 @@
--- postgresql.conf  http://postgres.cn/docs/9.6/pgstatstatements.html
--- shared_preload_libraries = 'pg_stat_statements'		# (change requires restart)
--- 创建pg_stat_statements
-create extension pg_stat_statements;
--- 创建好后，多出一个视图 pg_stat_statements 和 两个函数 pg_stat_statements_reset;
+1. 在postgresql安装目录找到postgresql.conf文件，修改其中shared_preload_libraries的值为pg_stat_statements(需要重启postgresql服务)
+    -- postgresql.conf  http://postgres.cn/docs/9.6/pgstatstatements.html
+    -- shared_preload_libraries = 'pg_stat_statements'		# (change requires restart)
+2. 创建pg_stat_statements
+    create extension pg_stat_statements;
+    -- 创建好后，多出一个视图 pg_stat_statements 和 两个函数 pg_stat_statements_reset;
 
--- pg_stat_statements_reset() 函数来重置 pg_stat_statements，方便阶段性的分析慢sql，比如专项优化、大版本上线监控。
-select pg_stat_statements_reset();
+    -- pg_stat_statements_reset() 函数来重置 pg_stat_statements，方便阶段性的分析慢sql，比如专项优化、大版本上线监控。
+    select pg_stat_statements_reset();
 
--- top io sql
+    -- top io sql
 
--- 平均单次io
-select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time)/calls desc limit 20;
--- 累计io
-select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time) desc limit 20;
+    -- 平均单次io
+    select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time)/calls desc limit 20;
+    -- 累计io
+    select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time) desc limit 20;
 
 
--- top time sql
+    -- top time sql
 
--- 平均time
-select userid::regrole, dbid, query, mean_time from pg_stat_statements order by mean_time desc limit 20;
--- 累计 time
-select userid::regrole, dbid, query, total_time from pg_stat_statements order by total_time desc limit 20;
--- 不稳定
-select userid::regrole, dbid, query, stddev_time from pg_stat_statements order by stddev_time desc limit 20;
+    -- 平均time
+    select userid::regrole, dbid, query, mean_time from pg_stat_statements order by mean_time desc limit 20;
+    -- 累计 time
+    select userid::regrole, dbid, query, total_time from pg_stat_statements order by total_time desc limit 20;
+    -- 不稳定
+    select userid::regrole, dbid, query, stddev_time from pg_stat_statements order by stddev_time desc limit 20;
 
-select * from pg_stat_statements;
+    select * from pg_stat_statements;
